@@ -1,0 +1,6 @@
+chromium_bsu-MainToolkit.o: MainToolkit.cpp /usr/include/stdc-predef.h \
+ MainToolkit.h
+
+/usr/include/stdc-predef.h:
+
+MainToolkit.h:

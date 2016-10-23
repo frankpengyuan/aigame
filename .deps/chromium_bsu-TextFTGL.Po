@@ -1,0 +1,6 @@
+chromium_bsu-TextFTGL.o: TextFTGL.cpp /usr/include/stdc-predef.h \
+ ../chromium-bsu-config.h
+
+/usr/include/stdc-predef.h:
+
+../chromium-bsu-config.h:

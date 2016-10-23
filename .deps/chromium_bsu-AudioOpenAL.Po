@@ -1,0 +1,6 @@
+chromium_bsu-AudioOpenAL.o: AudioOpenAL.cpp /usr/include/stdc-predef.h \
+ ../chromium-bsu-config.h
+
+/usr/include/stdc-predef.h:
+
+../chromium-bsu-config.h:

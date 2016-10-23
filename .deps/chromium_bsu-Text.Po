@@ -1,0 +1,8 @@
+chromium_bsu-Text.o: Text.cpp /usr/include/stdc-predef.h \
+ ../chromium-bsu-config.h Text.h
+
+/usr/include/stdc-predef.h:
+
+../chromium-bsu-config.h:
+
+Text.h:

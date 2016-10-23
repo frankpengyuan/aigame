@@ -1,0 +1,5 @@
+chromium_bsu-Ammo.o: Ammo.cpp /usr/include/stdc-predef.h Ammo.h
+
+/usr/include/stdc-predef.h:
+
+Ammo.h:
