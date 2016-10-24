@@ -38,7 +38,6 @@ int		Global::heroSuccess	= 0;
 float	Global::scrollSpeed		= -0.045;
 
 HeroAircraft	*Global::hero		= 0;
-HeroAircraft	*Global::hero2		= 0;
 EnemyFleet		*Global::enemyFleet	= 0;
 HeroAmmo		*Global::heroAmmo	= 0;
 EnemyAmmo		*Global::enemyAmmo	= 0;
@@ -153,8 +152,6 @@ void Global::newGame()
 	explosions->clear();
 	hero->newGame();
 	hero->setLives(0);
-	hero2->newGame();
-	hero2->setLives(0);
 	game_pause = false;
 
 //	Global::generateRandom();
@@ -196,7 +193,7 @@ void Global::gotoNextLevel()
 	heroAmmo->clear();
 	itemAdd->clear();
 	hero->fullHealth();
-	hero2->fullHealth();
+
 //	generateRandom();
 	itemAdd->loadScreenItems("");
 
@@ -215,8 +212,7 @@ void Global::createGame()
 	mainGL		= new MainGL();
 	explosions	= new Explosions();
 	enemyFleet	= new EnemyFleet();
-	hero		= new HeroAircraft(1);
-	hero2		= new HeroAircraft(2);
+	hero		= new HeroAircraft();
 	heroAmmo	= new HeroAmmo();
 	enemyAmmo	= new EnemyAmmo();
 	statusDisplay = new StatusDisplay();
@@ -254,7 +250,6 @@ void Global::deleteGame()
 	delete mainGL;
 	delete enemyFleet;
 	delete hero;
-	delete hero2;
 	delete heroAmmo;
 	delete enemyAmmo;
 	delete statusDisplay;
@@ -279,7 +274,6 @@ void Global::deleteTextures()
 	enemyFleet->deleteTextures();
 	explosions->deleteTextures();
 	hero->deleteTextures();
-	hero2->deleteTextures();
 	heroAmmo->deleteTextures();
 	ground->deleteTextures();
 	menu->deleteTextures();
@@ -300,7 +294,6 @@ void Global::loadTextures()
 	enemyFleet->loadTextures();
 	explosions->loadTextures();
 	hero->loadTextures();
-	hero2->loadTextures();
 	heroAmmo->loadTextures();
 	ground->loadTextures();
 	menu->loadTextures();

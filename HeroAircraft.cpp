@@ -39,7 +39,7 @@
 #include "Image.h"
 
 //====================================================================
-HeroAircraft::HeroAircraft(int heroNum)
+HeroAircraft::HeroAircraft()
 	: ScreenItem(ItemHero)
 {
 	game = Global::getInstance();
@@ -62,7 +62,6 @@ HeroAircraft::HeroAircraft(int heroNum)
 
 	currentItemIndex = 0;
 	useItemArmed	= 0.0;
-	this -> heroNum = heroNum;
 
 	loadTextures();
 
@@ -73,23 +72,11 @@ HeroAircraft::~HeroAircraft()
 {
 	deleteTextures();
 }
-//----------------------------------------------------------
-void HeroAircraft::setHeroNum(int heroNum)
-{
-	this -> heroNum = heroNum;
-}
 
 //----------------------------------------------------------
 void HeroAircraft::loadTextures()
 {
-	if (this -> heroNum == 1)
-	{
-		heroTex = Image::load(dataLoc("png/hero.png"));
-	}
-	else
-	{
-		heroTex = Image::load(dataLoc("png/hero2.png"));
-	}
+	heroTex = Image::load(dataLoc("png/hero.png"));
 	bombTex = Image::load(dataLoc("png/superBomb.png"));
 }
 
@@ -122,12 +109,7 @@ void HeroAircraft::newGame()
 //----------------------------------------------------------
 void HeroAircraft::reset()
 {
-	//printf("reseting... NUM: %d\n", this -> heroNum);
-	if (this -> heroNum == 1)
-		pos[0] = 1.0f;
-	else
-		pos[0] = -1.0f;
-	
+	pos[0] =  0.0;
 	pos[1] = -3.0f;
 	pos[2] = HERO_Z;
 
@@ -266,7 +248,7 @@ void HeroAircraft::useItem(int index)
 //----------------------------------------------------------
 void HeroAircraft::useItem()
 {
-	if((game->gameMode == Global::Game || game->gameMode == Global::Hero1Dead || game->gameMode == Global::Hero2Dead) && !superBomb && !game->game_pause)
+	if(game->gameMode == Global::Game && !superBomb && !game->game_pause)
 	{
 		if(!useItemArmed)
 		{
@@ -347,10 +329,7 @@ void HeroAircraft::doDamage(float d)
 	if(shields > HERO_SHIELDS)
 	{
 		shields	-= d*0.25;
-		if (this -> heroNum == 1)
-			game->explosions->addExplo(Explosions::HeroShields, pos);
-		else
-			game->explosions->addExplo(Explosions::Hero2Shields, pos);
+		game->explosions->addExplo(Explosions::HeroShields, pos);
 		game->statusDisplay->setShieldAlpha(1.0);
 	}
 	else if(shields > 0.0)
@@ -359,10 +338,7 @@ void HeroAircraft::doDamage(float d)
 		damage	+= d*0.2;
 		if(shields < 0.0)
 			shields = 0.0;
-		if (this -> heroNum == 1)
-			game->explosions->addExplo(Explosions::HeroShields, pos);
-		else
-			game->explosions->addExplo(Explosions::Hero2Shields, pos);
+		game->explosions->addExplo(Explosions::HeroShields, pos);
 		game->statusDisplay->setShieldAlpha(1.0);
 		game->statusDisplay->setDamageAlpha(1.0);
 	}
@@ -565,10 +541,7 @@ void HeroAircraft::checkForCollisions(EnemyFleet *fleet)
 			p[1] = pos[1]+0.2+r2;
 			p[2] = pos[2];
 			if(shields > 0.0)
-				if (this -> heroNum == 1)
-					game->explosions->addExplo(Explosions::HeroShields, pos);
-				else
-					game->explosions->addExplo(Explosions::Hero2Shields, pos);
+				game->explosions->addExplo(Explosions::HeroShields, p);
 			else
 				game->explosions->addExplo(Explosions::HeroDamage, p);
 
@@ -615,7 +588,7 @@ void HeroAircraft::checkForPowerUps(PowerUps *powerUps)
 	float p0[3] = {10.4,-8.30, 25.0 };
 	float v0[3] = { 0.0, 0.08, 0.0 };
 	float clr[4] = { 1.0, 1.0, 1.0, 1.0 };
-	if((game->gameMode == Global::Game || game->gameMode == Global::Hero1Dead || game->gameMode == Global::Hero2Dead))
+	if(game->gameMode == Global::Game)
 		pwrUp = powerUps->getFirst();
 	else
 		pwrUp = 0;
@@ -719,15 +692,10 @@ void HeroAircraft::update()
 	}
 	else if(dontShow == 1)
 	{
-		if (this -> heroNum == 1)
-			pos[0] =  1.0f;
-		else
-			pos[0] =  -1.0f;
+		pos[0] =  0.0f;
 		pos[1] = -3.0f;
 	}
-	//printf("pos[0]:%f, pos[1]:%f\n", pos[0], pos[1]);
-	//[-10, 7.5]		[10, 7.5]
-	//[-10, -7.5]		[10, -7.5]
+
 	//-- Gun flashes are drawn in StatusDisplay
 	if(gunTrigger)
 		shootGun();
@@ -861,30 +829,12 @@ void HeroAircraft::drawGL()
 //----------------------------------------------------------
 void HeroAircraft::startDeath()
 {
-	//printf("START death... now hero %d die with gamemode is %d\n", this -> heroNum, game->gameMode);
 	deathExplosions();
 	if(lives < 0)
 	{
 		fireGun(false);
-		if (this -> heroNum == 1)
-		{
-			if (game->gameMode == Global::Hero2Dead || game->gameMode == Global::HeroDead)
-			{
-				game->heroDeath = DEATH_TIME;
-				game->gameMode = Global::HeroDead;
-			} else {
-				game->gameMode = Global::Hero1Dead;
-			}
-		} else if (this -> heroNum == 2)
-		{
-			if (game->gameMode == Global::Hero1Dead || game->gameMode == Global::HeroDead)
-			{
-				game->heroDeath = DEATH_TIME;
-				game->gameMode = Global::HeroDead;
-			} else {
-				game->gameMode = Global::Hero2Dead;
-			}
-		}
+		game->heroDeath = DEATH_TIME;
+		game->gameMode = Global::HeroDead;
 		dontShow = -1;
 	}
 	else
@@ -893,7 +843,6 @@ void HeroAircraft::startDeath()
 		reset();
 		dontShow = 130;
 	}
-	//printf("END death... now hero %d died with gamemode is %d\n", this -> heroNum, game->gameMode);
 }
 
 //----------------------------------------------------------

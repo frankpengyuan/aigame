@@ -32,7 +32,7 @@ class ScreenItemAdd;
 class Global
 {
 public:
-	enum GameMode { Game, Menu, LevelOver, Hero1Dead, Hero2Dead, HeroDead };
+	enum GameMode { Game, Menu, LevelOver, HeroDead };
 
 	~Global();
 
@@ -76,7 +76,6 @@ public:
 	static GameMode	gameMode;
 
 	static HeroAircraft	*hero;
-	static HeroAircraft	*hero2;
 	static EnemyFleet	*enemyFleet;
 	static HeroAmmo		*heroAmmo;
 	static EnemyAmmo	*enemyAmmo;

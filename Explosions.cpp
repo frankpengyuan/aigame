@@ -108,11 +108,6 @@ Explosions::Explosions()
 	exploStay[HeroShields]		= 25.0;
 	exploPause[HeroShields][1]	= 5;
 
-	exploSize[Hero2Shields][0]	= 1.6;
-	exploSize[Hero2Shields][1]	= 1.6;
-	exploStay[Hero2Shields]		= 25.0;
-	exploPause[Hero2Shields][1]	= 5;
-
 	exploSize[PowerBurst][0]	= 1.8;
 	exploSize[PowerBurst][1]	= 1.8;
 	exploStay[PowerBurst]		= 35.0;
@@ -179,7 +174,6 @@ void	Explosions::loadTextures()
 	tex[HeroAmmo01]		= Image::load(dataLoc("png/heroAmmoExplo01.png"), IMG_NOMIPMAPS, IMG_ALPHA, GL_CLAMP, GL_NEAREST, GL_LINEAR);
 	tex[HeroAmmo02]		= Image::load(dataLoc("png/heroAmmoExplo02.png"), IMG_NOMIPMAPS, IMG_ALPHA, GL_CLAMP, GL_NEAREST, GL_LINEAR);
 	tex[HeroShields]	= Image::load(dataLoc("png/heroShields.png"), IMG_NOMIPMAPS, IMG_BLEND3, GL_CLAMP, GL_LINEAR, GL_LINEAR);
-	tex[Hero2Shields]	= Image::load(dataLoc("png/heroShields.png"), IMG_NOMIPMAPS, IMG_BLEND3, GL_CLAMP, GL_LINEAR, GL_LINEAR);
 //	tex[HeroShields]	= Image::load(dataLoc("png/heroShields.png"), IMG_NOMIPMAPS, IMG_BLEND1, GL_CLAMP, GL_LINEAR, GL_LINEAR);
 	tex[PowerBurst]		= Image::load(dataLoc("png/powerUpTex.png"), IMG_NOMIPMAPS, IMG_BLEND3, GL_CLAMP, GL_LINEAR, GL_LINEAR);
 	tex[AddLife]		= Image::load(dataLoc("png/life.png"));
@@ -363,7 +357,6 @@ void	Explosions::drawGL()
 	if(exploRoot[HeroAmmo02]->next)		drawAmmo(HeroAmmo02);
 
 	if(exploRoot[HeroShields]->next)	drawShields(HeroShields);
-	if(exploRoot[Hero2Shields]->next)	drawShields(Hero2Shields);
 	if(exploRoot[PowerBurst]->next)		drawBurst(PowerBurst);
 
 	if(exploRoot[AddLife]->next)		drawLife(AddLife);
@@ -538,7 +531,7 @@ void	Explosions::drawShields(ExploType type)
 		ex = exploSize[type][0]*tmp;
 		ey = exploSize[type][1]*tmp;
 		glColor4f(clr, clr, 1.0, clr*0.7);
-		pos = (type == HeroShields) ? game->hero->pos : game->hero2->pos;
+		pos = game->hero->pos;
 		glPushMatrix();
 		glTranslatef(pos[0], pos[1], pos[2]);
 		glRotatef(IRAND, 0.0, 0.0, 1.0);

@@ -38,6 +38,7 @@ private:
 	void keyDown(SDL_Event *event);
 	void keyDownGame(SDL_Event *event);
 	void keyUp(SDL_Event *event);
+	void aimove(void);
 	void mouseMotion(SDL_Event *event);
 	void mouseButtonDown(SDL_Event *event);
 	void mouseButtonUp(SDL_Event *event);
@@ -63,7 +64,7 @@ private:
 
 	int	adjCount;
 	float	key_speed_x, key_speed_y;
-	float	key_speed_x_hero2, key_speed_y_hero2;
+	int mem;
 };
 
 #endif // USE_SDL

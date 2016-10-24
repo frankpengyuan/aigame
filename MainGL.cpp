@@ -168,8 +168,6 @@ void MainGL::drawGL()
 	switch(game->gameMode)
 	{
 		case Global::Game:
-		case Global::Hero1Dead:
-		case Global::Hero2Dead:
 			drawGameGL();
 			break;
 		case Global::HeroDead:
@@ -212,24 +210,16 @@ void MainGL::drawGameGL()
 		game->heroAmmo->updateAmmo();
 		game->enemyAmmo->updateAmmo();
 		game->heroAmmo->checkForHits(game->enemyFleet);
-		if((game->gameMode == Global::Game || game->gameMode == Global::Hero1Dead || game->gameMode == Global::Hero2Dead))
+		if(game->gameMode == Global::Game)
 		{
-			if (game->gameMode != Global::Hero1Dead)
-				game->enemyAmmo->checkForHits(game->hero);
-			if (game->gameMode != Global::Hero2Dead)
-				game->enemyAmmo->checkForHits(game->hero2);
+			game->enemyAmmo->checkForHits(game->hero);
 			game->hero->checkForCollisions(game->enemyFleet);
 			game->hero->checkForPowerUps(game->powerUps);
-			game->hero2->checkForCollisions(game->enemyFleet);
-			game->hero2->checkForPowerUps(game->powerUps);
 		}
 		game->explosions->update();
 		game->audio->update();
 
-		if (game->gameMode != Global::Hero1Dead)
-			game->hero->update();
-		if (game->gameMode != Global::Hero2Dead)
-			game->hero2->update();
+		game->hero->update();
 		game->gameFrame++;
 	}
 
@@ -240,10 +230,7 @@ void MainGL::drawGameGL()
 
 	//-- Draw actors
 	game->enemyFleet->drawGL();
-	if (game->gameMode != Global::Hero1Dead)
-		game->hero->drawGL();
-	if (game->gameMode != Global::Hero2Dead)
-		game->hero2->drawGL();
+	game->hero->drawGL();
 
 	if(config->gfxLevel() > 0)
 		game->statusDisplay->darkenGL();
@@ -260,11 +247,8 @@ void MainGL::drawGameGL()
 	game->explosions->drawGL();
 
 	//-- Draw stats
-	if (game->gameMode != Global::Hero1Dead)
-		game->statusDisplay->drawGL(game->hero);
-	if (game->gameMode != Global::Hero2Dead)
-		game->statusDisplay->drawGL(game->hero2);
-	// TODO: now it only shows status for one hero
+	game->statusDisplay->drawGL(game->hero);
+
 }
 
 //----------------------------------------------------------
@@ -296,10 +280,7 @@ void MainGL::drawDeadGL()
 	game->enemyAmmo->updateAmmo();
 	game->heroAmmo->checkForHits(game->enemyFleet);
 	game->audio->update();
-	if (game->gameMode != Global::Hero1Dead)
-		game->hero->update();
-	if (game->gameMode != Global::Hero2Dead)
-		game->hero2->update();
+	game->hero->update();
 	game->gameFrame++;
 
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -319,10 +300,7 @@ void MainGL::drawDeadGL()
 	//-- Draw explosions
 	game->explosions->drawGL();
 	//-- Draw stats
-	if (game->gameMode != Global::Hero1Dead)
-		game->statusDisplay->drawGL(game->hero);
-	if (game->gameMode != Global::Hero2Dead)
-		game->statusDisplay->drawGL(game->hero2);
+	game->statusDisplay->drawGL(game->hero);
 
 	int		skill = config->intSkill();
 	float	heroScore = game->hero->getScore();
@@ -378,17 +356,13 @@ void MainGL::drawSuccessGL()
 	game->explosions->update();
 	game->heroAmmo->updateAmmo();
 	game->hero->update();
-	game->hero2->update();
 	game->audio->update();
 
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	//-- Draw background
 	game->ground->drawGL();
 	//-- Draw actors
-	if (game->gameMode != Global::Hero1Dead)
-		game->hero->drawGL();
-	if (game->gameMode != Global::Hero2Dead)
-		game->hero2->drawGL();
+	game->hero->drawGL();
 
 	if(config->gfxLevel() > 0)
 		game->statusDisplay->darkenGL();
@@ -399,10 +373,7 @@ void MainGL::drawSuccessGL()
 	//-- Draw explosions
 	game->explosions->drawGL();
 	//-- Draw stats
-	if (game->gameMode != Global::Hero1Dead)
-		game->statusDisplay->drawGL(game->hero);
-	if (game->gameMode != Global::Hero2Dead)
-		game->statusDisplay->drawGL(game->hero2);
+	game->statusDisplay->drawGL(game->hero);
 
 	char	buffer[512];
 	sprintf(buffer, _("congratulations!\n \nl e v e l\n %d \nc o m p l e t e\n \n"), game->gameLevel);

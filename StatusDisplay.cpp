@@ -674,8 +674,7 @@ void StatusDisplay::drawGL(HeroAircraft	*hero)
 		glTranslatef(-16, 13.0, 0.0);
 		glScalef(0.035, 0.035, 1.0);
 		glColor4f(1.0, 1.0, 1.0, tipShipShow/300.0 );
-		//const char *str = _("do not let -any- ships past you! each one costs you a life!");
-		const char *str = ("modified game for CS 221");
+		const char *str = _("do not let -any- ships past you! each one costs you a life!");
 		game->text->Render(str);
 		glPopMatrix();
 	}

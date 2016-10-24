@@ -48,7 +48,7 @@ private:
 	ActiveAmmo	*getNewAmmo();
 	void 		killAmmo(ActiveAmmo *dead);
 
-private:
+public:
 	ActiveAmmo	*ammoRoot[NUM_ENEMY_AMMO_TYPES];
 	ActiveAmmo	*ammoPool;
 	float		ammoSize[NUM_ENEMY_AMMO_TYPES][2];

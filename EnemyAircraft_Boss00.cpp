@@ -44,7 +44,7 @@ void EnemyAircraft_Boss00::init(float *p, float randFact)
 {
 	EnemyAircraft::init(p, randFact);
 
-	damage = baseDamage = -1.0*game->gameSkill;
+	damage = baseDamage = -10000.0*game->gameSkill;
 	size[0] = 3.5;
 	size[1] = 2.275;
 	collisionMove = 0.05;
@@ -58,15 +58,7 @@ void EnemyAircraft_Boss00::update()
 {
 	float	v[3] = { 0.0, -0.2, 0.0 };
 //	float	*hpos = target->getPos();
-	float	*hpos;
-	if (game->gameMode == Global::Game && (double) rand() / (RAND_MAX) > 0.5)
-		hpos = game->hero->getPos();
-	else if (game->gameMode == Global::Game && (double) rand() / (RAND_MAX) <= 0.5)
-		hpos = game->hero2->getPos();
-	else if (game->gameMode == Global::Hero1Dead)
-		hpos = game->hero2->getPos();
-	else if (game->gameMode == Global::Hero2Dead)
-		hpos = game->hero->getPos();
+	float	*hpos = game->hero->getPos();
 	float	a = hpos[0]-pos[0];
 	float	b = hpos[1]-pos[1];
 	float	dist;

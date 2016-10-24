@@ -61,23 +61,13 @@ void EnemyAircraft_Gnat::update()
 {
 	float	v[3] = { 0.0, -0.2, 0.0 };
 //	float	*hpos = target->getPos();
-	float	*hpos;
-	if (game->gameMode == Global::Game && (double) rand() / (RAND_MAX) > 0.5)
-		hpos = game->hero->getPos();
-	else if (game->gameMode == Global::Game && (double) rand() / (RAND_MAX) <= 0.5)
-		hpos = game->hero2->getPos();
-	else if (game->gameMode == Global::Hero1Dead)
-		hpos = game->hero2->getPos();
-	else if (game->gameMode == Global::Hero2Dead)
-		hpos = game->hero->getPos();
+	float	*hpos = game->hero->getPos();
 	float	a = hpos[0]-pos[0];
 	float	b = hpos[1]-pos[1];
 
 	//-- update age
 	age++;
 	shootInterval--;
-
-	//printf("this is a gnat!\n");
 
 	pos[0] += secondaryMove[0]*game->speedAdj;
 	pos[1] += secondaryMove[1]*game->speedAdj;

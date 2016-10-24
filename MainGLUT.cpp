@@ -202,9 +202,7 @@ void MainGLUT::keyboardASCII(unsigned char key, int, int)
 			}
 			else
 			{
-				if(game->gameMode != Global::Game &&
-					game->gameMode != Global::Hero1Dead &&
-					game->gameMode != Global::Hero2Dead)
+				if(game->gameMode != Global::Game)
 				{
 					game->newGame();
 				}

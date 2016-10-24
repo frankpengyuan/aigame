@@ -20,6 +20,7 @@
 #include <cstdio>
 #include <cstring>
 #include <cmath>
+#include <climits>
 
 #include "Config.h"
 
@@ -28,6 +29,7 @@
 #include "MenuGL.h"
 #include "Audio.h"
 #include "Ground.h"
+#include "EnemyAmmo.h"
 
 #if SDL_VERSION_ATLEAST(2,0,0)
 		#define SDLK_KP1 SDLK_KP_1
@@ -122,7 +124,7 @@ bool MainSDL::process(SDL_Event *event)
 void MainSDL::saveEvent(SDL_Event *event)
 {
 	Global	*game = Global::getInstance();
-	if(game->eventFile && (game->gameMode == Global::Game || game->gameMode == Global::Hero1Dead || game->gameMode == Global::Hero2Dead))
+	if(game->eventFile && game->gameMode == Global::Game)
 	{
 #if SDL_VERSION_ATLEAST(2,0,0)
 		SDL_WindowEvent 		*evW = 0;
@@ -304,7 +306,7 @@ void MainSDL::activation(bool shown, bool mouse, bool input, bool gain)
 	Global *game = Global::getInstance();
 	Config* config = Config::instance();
 	if( config->debug() ) fprintf(stderr, "app %s ", gain ? "gained" : "lost" );
-	bool grab_mouse = (game->gameMode == Global::Game || game->gameMode == Global::Hero1Dead || game->gameMode == Global::Hero2Dead) && !game->game_pause && gain ? true : false;
+	bool grab_mouse = game->gameMode == Global::Game && !game->game_pause && gain ? true : false;
 	if ( shown )
 	{
 		grabMouse( grab_mouse, grab_mouse );
@@ -329,11 +331,8 @@ void MainSDL::keyUp(SDL_Event *event)
 	Global *game = Global::getInstance();
 	switch(event->key.keysym.sym)
 	{
-		case SDLK_RCTRL:
-			game->hero->fireGun(false);
-			break;
-		case SDLK_LCTRL:
-			game->hero2->fireGun(false);
+		case SDLK_SPACE:
+			//game->hero->fireGun(false);
 			break;
 		default:
 			break;
@@ -368,9 +367,7 @@ void MainSDL::keyDown(SDL_Event *event)
 			}
 			else
 			{
-				if(game->gameMode != Global::Game &&
-					game->gameMode != Global::Hero1Dead &&
-					game->gameMode != Global::Hero2Dead)
+				if(game->gameMode != Global::Game)
 				{
 					game->newGame();
 				}
@@ -381,7 +378,7 @@ void MainSDL::keyDown(SDL_Event *event)
 			}
 			break;
 		default:
-			if(game->gameMode == Global::Game || game->gameMode == Global::Hero1Dead || game->gameMode == Global::Hero2Dead)
+			if(game->gameMode == Global::Game)
 				keyDownGame(event);
 			else if(game->gameMode == Global::LevelOver)
 			{
@@ -471,23 +468,8 @@ void MainSDL::keyDownGame(SDL_Event *event)
 	    case SDLK_DOWN:
 			key_speed_y += 5.0;
 			break;
-		case SDLK_a:
-			key_speed_x_hero2 -= 5.0;
-			break;
-	    case SDLK_d:
-			key_speed_x_hero2 += 5.0;
-			break;
-	    case SDLK_w:
-			key_speed_y_hero2 -= 5.0;
-			break;
-	    case SDLK_s:
-			key_speed_y_hero2 += 5.0;
-			break;
-	    case SDLK_RCTRL:
+	    case SDLK_SPACE:
 			game->hero->fireGun(true);
-			break;
-		case SDLK_LCTRL:
-			game->hero2->fireGun(true);
 			break;
 		default:
 			if( config->debug() )
@@ -503,7 +485,7 @@ void MainSDL::keyDownGame(SDL_Event *event)
 void MainSDL::keyMove()
 {
 	Global	*game = Global::getInstance();
-	if((game->gameMode == Global::Game || game->gameMode == Global::Hero1Dead || game->gameMode == Global::Hero2Dead)){
+	if(game->gameMode == Global::Game){
 #if SDL_VERSION_ATLEAST(2,0,0)
 		const Uint8 *keystate = SDL_GetKeyboardState(NULL);
 		#define LEFT SDL_SCANCODE_LEFT
@@ -519,10 +501,6 @@ void MainSDL::keyMove()
 		#define KP7 SDL_SCANCODE_KP_7
 		#define KP8 SDL_SCANCODE_KP_8
 		#define KP9 SDL_SCANCODE_KP_9
-		#define KEYW SDL_SCANCODE_W
-		#define KEYA SDL_SCANCODE_A
-		#define KEYS SDL_SCANCODE_S
-		#define KEYD SDL_SCANCODE_D
 #else
 		Uint8 *keystate = SDL_GetKeyState(NULL);
 		#define LEFT SDLK_LEFT
@@ -538,10 +516,6 @@ void MainSDL::keyMove()
 		#define KP7 SDLK_KP7
 		#define KP8 SDLK_KP8
 		#define KP9 SDLK_KP9
-		#define KEYW SDLK_w
-		#define KEYA SDLK_a
-		#define KEYS SDLK_s
-		#define KEYD SDLK_d
 #endif
 		if( keystate[LEFT]  || keystate[KP4] ) key_speed_x -= 2.0 + abs(key_speed_x)*0.4;
 		if( keystate[RIGHT] || keystate[KP6] ) key_speed_x += 2.0 + abs(key_speed_x)*0.4;
@@ -552,19 +526,123 @@ void MainSDL::keyMove()
 		if( keystate[KP3] ){ key_speed_x += 2.0 + abs(key_speed_x)*0.4; key_speed_y += 2.0 + abs(key_speed_y)*0.4; }
 		if( keystate[KP1] ){ key_speed_x -= 2.0 + abs(key_speed_x)*0.4; key_speed_y += 2.0 + abs(key_speed_y)*0.4; }
 		//float s = (1.0-game->speedAdj)+(game->speedAdj*0.7);
-		if( keystate[KEYA] ) key_speed_x_hero2 -= 2.0 + abs(key_speed_x_hero2)*0.4;
-		if( keystate[KEYD] ) key_speed_x_hero2 += 2.0 + abs(key_speed_x_hero2)*0.4;
-		if( keystate[KEYW] ) key_speed_y_hero2 -= 2.0 + abs(key_speed_y_hero2)*0.4;
-		if( keystate[KEYS] ) key_speed_y_hero2 += 2.0 + abs(key_speed_y_hero2)*0.4;
-
 		float s = 0.7;
 		key_speed_x *= s;
 		key_speed_y *= s;
-		key_speed_x_hero2 *= s;
-		key_speed_y_hero2 *= s;
 		game->hero->moveEvent(key_speed_x,key_speed_y);
-		game->hero2->moveEvent(key_speed_x_hero2,key_speed_y_hero2);
+		//printf("key_speed_x: %f\n", key_speed_x);
 	}
+}
+//----------------------------------------------------------
+void MainSDL::aimove()
+{	
+	Global	*game = Global::getInstance();
+	ActiveAmmo		*thisAmmo;
+	ActiveAmmo		*backAmmo;
+	ActiveAmmo		*nextAmmo;
+	float	minDist;
+	float	dist;
+	float	*p;
+	
+	minDist = (game->hero->getSize(0)+game->hero->getSize(1))*2;
+
+	static int flag = 0; // 1 go right, -1 go left
+	static int vflag = 0; // 1 gp up, -1 go down
+	bool start_edge = false;
+
+	int avoid_dist = 4;
+	int rand_dist = 5;
+
+	for(int i = 0; i < NUM_ENEMY_AMMO_TYPES && flag == 0 && vflag == 0; i++)
+	{
+		thisAmmo = game -> enemyAmmo -> ammoRoot[i] -> next;
+		while(thisAmmo)
+		{
+			p = thisAmmo->pos;
+			dist = fabs(p[0]-game->hero->pos[0]) + fabs(p[1]-game->hero->pos[1]);
+			if(dist < minDist && p[0]-game->hero->pos[0] > 0)
+			{
+				flag = -avoid_dist;
+			}
+			else if(dist < minDist && p[0]-game->hero->pos[0] <= 0)
+			{
+				flag = avoid_dist;
+			}
+			if (game->hero->pos[0] < -9 || game->hero->pos[0] > 9)
+			{
+				flag = -flag;
+			}
+			if(dist < minDist && p[1]-game->hero->pos[1] > 0)
+			{
+				vflag = avoid_dist;
+			}
+			else if(dist < minDist && p[1]-game->hero->pos[1] <= 0)
+			{
+				vflag = -avoid_dist;
+			}
+			if (game->hero->pos[1] < -6 || game->hero->pos[1] > 6)
+			{
+				vflag = -vflag;
+			}
+			thisAmmo = thisAmmo->next;
+		}
+	}
+
+	if (flag == 0 && vflag == 0)
+	{
+		if (game->hero->pos[1] > -4 && game->hero->pos[1] < -2)
+		{
+			if (this -> mem > 0)
+				{this -> mem --; flag = rand_dist;}
+			else if (this -> mem < 0)
+				{this -> mem ++; flag = -rand_dist;}
+			else
+				this -> mem = (int) ((float)rand() / INT_MAX > 0.5) ? 1 : -1;
+		} else {
+			vflag = (game->hero->pos[1] > -3) ? 1 : -1;
+		}
+	}
+
+	start_edge = !((flag < 0 && key_speed_x < 0) ||
+		(flag > 0 && key_speed_x > 0) ||
+		(vflag < 0 && key_speed_y < 0) ||
+		(vflag > 0 && key_speed_y > 0));
+	if (start_edge)
+	{
+		key_speed_x = 0;
+		key_speed_y = 0;
+	}
+	if (flag < 0 && start_edge)
+	{
+		key_speed_x -= 5; flag ++;
+	}
+	else if (flag > 0 && start_edge)
+	{
+		key_speed_x += 5; flag --;
+	}
+	if (vflag < 0 && start_edge)
+	{
+		key_speed_y -= 5; vflag ++;
+	}
+	else if (vflag > 0 && start_edge)
+	{
+		key_speed_y += 5; vflag --;
+	}
+	if(game->gameMode == Global::Game && !start_edge)
+	{
+		if( flag < 0) key_speed_x -= 2.0 + abs(key_speed_x)*0.4;
+		if( flag > 0) key_speed_x += 2.0 + abs(key_speed_x)*0.4;	
+		if( vflag < 0) key_speed_y -= 2.0 + abs(key_speed_y)*0.4;
+		if( vflag > 0) key_speed_y += 2.0 + abs(key_speed_y)*0.4;
+		flag -= flag > 0 ? 1 : (flag < 0 ? -1 : 0);
+		vflag -= vflag > 0 ? 1 : (vflag < 0 ? -1 : 0);
+	}
+	float s = 0.7;
+	key_speed_x *= s;
+	key_speed_y *= s;
+	//printf("key_speed_x: %f, flag: %d\n", key_speed_x, flag);
+	//printf("key_speed_y: %f, vflag: %d\n", key_speed_y, vflag);
+	game->hero->moveEvent(key_speed_x,key_speed_y);
 }
 
 //----------------------------------------------------------
@@ -607,7 +685,7 @@ void MainSDL::mouseButtonDown(SDL_Event *ev)
 {
 	Global	*game = Global::getInstance();
 	SDL_MouseButtonEvent *mEv = (SDL_MouseButtonEvent*)ev;
-	if((game->gameMode == Global::Game || game->gameMode == Global::Hero1Dead || game->gameMode == Global::Hero2Dead))
+	if(game->gameMode == Global::Game)
 	{
 		switch(mEv->button)
 		{

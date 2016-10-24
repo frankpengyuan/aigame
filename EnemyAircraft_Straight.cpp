@@ -62,8 +62,6 @@ void EnemyAircraft_Straight::update()
 	age++;
 	shootInterval--;
 
-	//printf("straight!~\n");
-
 	pos[0] += secondaryMove[0]*game->speedAdj;
 	pos[1] += secondaryMove[1]*game->speedAdj;
 	float s = (1.0-game->speedAdj)+(game->speedAdj*0.7);

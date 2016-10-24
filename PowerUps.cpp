@@ -227,19 +227,19 @@ void PowerUps::update()
 
 		if(pwrUp->pos[1] < -12)
 		{
-			if((game->gameMode == Global::Game || game->gameMode == Global::Hero1Dead || game->gameMode == Global::Hero2Dead))
+			if(game->gameMode == Global::Game)
 				switch(pwrUp->type)
 				{
 					case PowerUps::SuperShields:
-						game->hero->addLife();
-						game->hero->addScore(2500.0);
+						//game->hero->addLife();
+						//game->hero->addScore(2500.0);
 						break;
 					case PowerUps::Shields:
 					case PowerUps::Repair:
-						game->hero->addScore(10000.0);
+						//game->hero->addScore(10000.0);
 						break;
 					default:
-						game->hero->addScore(2500.0);
+						//game->hero->addScore(2500.0);
 						break;
 				}
 			delUp = pwrUp;

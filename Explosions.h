@@ -31,7 +31,7 @@ public:
 						EnemyAmmo00, EnemyAmmo01, EnemyAmmo02, EnemyAmmo03, EnemyAmmo04,
 						HeroDestroyed, HeroDamage,
 						HeroAmmo00, HeroAmmo01, HeroAmmo02,
-						HeroShields, Hero2Shields,
+						HeroShields,
 						PowerBurst,
 						AddLife, LoseLife, ScoreLife,
 						Electric, Glitter,

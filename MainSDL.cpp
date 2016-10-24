@@ -48,6 +48,7 @@
 MainSDL::MainSDL(int argc, char **argv)
 	: MainToolkit(argc, argv)
 {
+	this -> mem = 0;
 	Global	*game = Global::getInstance();
 	Config	*config = Config::instance();
 	mouseToggle = game->mouseActive;
@@ -55,7 +56,6 @@ MainSDL::MainSDL(int argc, char **argv)
 	xjoy = yjoy = xjNow = yjNow = 0;
 	adjCount = 0;
 	key_speed_x = key_speed_y = 0;
-	key_speed_x_hero2 = key_speed_y_hero2 = 0;
 
 	Uint32 initOpts;
 
@@ -159,7 +159,6 @@ bool MainSDL::run()
 	Uint32 now_time		= 0;
 	Uint32 last_time	= 0;
 	key_speed_x  = key_speed_y = 0.0;
-	key_speed_x_hero2  = key_speed_y_hero2 = 0.0;
 	int done = 0;
 	int frames;
 
@@ -192,7 +191,7 @@ bool MainSDL::run()
 //		//-- cheezy, partially functional record mechanism
 //		bool write = false;
 //		SDL_Event *fileEvent;
-//		if( !write && (game->gameMode == Global::Game || game->gameMode == Global::Hero1Dead || game->gameMode == Global::Hero2Dead))
+//		if( !write && game->gameMode == Global::Game)
 //		{
 //			while( (fileEvent = getEvent(game->eventFile)) )
 //				done = this->process(fileEvent);
@@ -206,7 +205,8 @@ bool MainSDL::run()
 			done = this->process(&event);
 		}
 		this->joystickMove();
-		this->keyMove();
+		//this->keyMove();
+		this->aimove();
 		++frames;
 
 		game->frame++;

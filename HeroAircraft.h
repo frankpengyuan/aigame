@@ -35,10 +35,9 @@ class PowerUps;
 class HeroAircraft : public ScreenItem
 {
 public:
-	HeroAircraft(int heroNum);
+	HeroAircraft();
 	~HeroAircraft();
 
-	void	setHeroNum(int heroNum);
 	void	moveEvent(int x, int y);
 	void	fireGun(bool);
 	void	shootGun();
@@ -94,8 +93,6 @@ protected:
 	bool	gunActive[NUM_HERO_AMMO_TYPES];
 
 private:
-	int		heroNum;
-
 	float	epos[3];
 	float	size[2];
 	float	bound[2][2];

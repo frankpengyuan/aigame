@@ -327,7 +327,6 @@ void	EnemyFleet::update()
 			thisEnemy->damage = 1;
 			thisEnemy->age = 0;
 			//game->hero->loseLife();
-			//MODIFIED:: remove life-lossing from enemy passing through the screen
 			game->tipShipPast++;
 		}
 
