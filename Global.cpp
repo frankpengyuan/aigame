@@ -26,6 +26,7 @@ bool	Global::mouseActive		= false;
 float	Global::fps			= 50.0;
 int		Global::frame		= 0;
 int		Global::gameFrame	= 0;
+unsigned long Global::total_time = 0;
 float	Global::gameSpeed	= 0.5;
 float	Global::gameSkill	= 1.0;
 int		Global::gameLevel	= 1;
@@ -144,6 +145,7 @@ void Global::newGame()
 	gameSkill = config->gameSkillBase() + 0.5;
 	gameSkill += (gameLevel-1)*0.05;
 	gameFrame = 0;
+	total_time = 0;
 	enemyFleet->clear();
 	powerUps->clear();
 	enemyAmmo->clear();
@@ -187,6 +189,7 @@ void Global::gotoNextLevel()
 	if(gameSkill > 1.9)
 		gameSkill = 1.9;
 	gameFrame = 0;
+	total_time = 0;
 	enemyFleet->clear();
 	powerUps->clear();
 	enemyAmmo->clear();

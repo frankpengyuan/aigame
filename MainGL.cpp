@@ -20,6 +20,7 @@
 #include <cstring>
 #include <cmath>
 #include <sys/stat.h>
+#include <sys/timeb.h>
 
 #include "compatibility.h"
 
@@ -226,29 +227,35 @@ void MainGL::drawGameGL()
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	//-- Draw background
-	game->ground->drawGL();
+	if (config->show_all())
+	{
+		game->ground->drawGL();
 
-	//-- Draw actors
-	game->enemyFleet->drawGL();
-	game->hero->drawGL();
-
+		//-- Draw actors
+		game->enemyFleet->drawGL();
+		game->hero->drawGL();
+	}
+	
 	if(config->gfxLevel() > 0)
 		game->statusDisplay->darkenGL();
 
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
-	game->powerUps->drawGL();
+	if (config->show_all())
+	{
+		game->powerUps->drawGL();
 
-	//-- Draw ammo
-	game->heroAmmo->drawGL();
-	game->enemyAmmo->drawGL();
+		//-- Draw ammo
+		game->heroAmmo->drawGL();
+		game->enemyAmmo->drawGL();
 
-	//-- Draw explosions
-	game->explosions->drawGL();
-
-	//-- Draw stats
-	game->statusDisplay->drawGL(game->hero);
-
+		//-- Draw explosions
+		game->explosions->drawGL();
+	
+		//-- Draw stats
+		game->statusDisplay->drawGL(game->hero);
+	}
+	//printf("%6.1f\n", game->fps);
 }
 
 //----------------------------------------------------------
@@ -284,41 +291,56 @@ void MainGL::drawDeadGL()
 	game->gameFrame++;
 
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	//-- Draw background
-	game->ground->drawGL();
-	//-- Draw actors
-	game->enemyFleet->drawGL();
+	if (config->show_all())
+	{
+		//-- Draw background
+		game->ground->drawGL();
+		//-- Draw actors
+		game->enemyFleet->drawGL();
+	}
 
 	if(config->gfxLevel() > 0)
 		game->statusDisplay->darkenGL();
 
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-	game->powerUps->drawGL();
-	//-- Draw ammo
-	game->heroAmmo->drawGL();
-	game->enemyAmmo->drawGL();
-	//-- Draw explosions
-	game->explosions->drawGL();
-	//-- Draw stats
-	game->statusDisplay->drawGL(game->hero);
+	if (config->show_all())
+	{
+		game->powerUps->drawGL();
+		//-- Draw ammo
+		game->heroAmmo->drawGL();
+		game->enemyAmmo->drawGL();
+		//-- Draw explosions
+		game->explosions->drawGL();
+		//-- Draw stats
+		game->statusDisplay->drawGL(game->hero);
+	}
 
 	int		skill = config->intSkill();
 	float	heroScore = game->hero->getScore();
-	HiScore *hiScore = HiScore::getInstance();
-	char buffer[256];
-	if(hiScore->check(skill, heroScore) == 1)
+	if (game->total_time > 0)
 	{
-		sprintf(buffer, _("new high score!\n\n%d"), (int)heroScore);
-		drawTextGL(buffer, game->heroDeath, 0.15);
+		printf("FINAL SCORE: %d\n", (int)heroScore);
+		printf("Run %d frams in %f seconds.\n", (int)game->gameFrame, (game->total_time)/1000.0);
+		game->total_time = 0;
 	}
-	else if(hiScore->check(skill, heroScore) > 1)
+	if (config->show_all())
 	{
-		sprintf(buffer, _("n o t   b a d !\nrank : %d\n\n%d"), hiScore->check(skill, heroScore), (int)heroScore);
-		drawTextGL(buffer, game->heroDeath, 0.15);
-	}
-	else
-	{
-		drawTextGL(_("l o s e r"), game->heroDeath, 0.25);
+		HiScore *hiScore = HiScore::getInstance();
+		char buffer[256];
+		if(hiScore->check(skill, heroScore) == 1)
+		{
+			sprintf(buffer, _("new high score!\n\n%d"), (int)heroScore);
+			drawTextGL(buffer, game->heroDeath, 0.15);
+		}
+		else if(hiScore->check(skill, heroScore) > 1)
+		{
+			sprintf(buffer, _("n o t   b a d !\nrank : %d\n\n%d"), hiScore->check(skill, heroScore), (int)heroScore);
+			drawTextGL(buffer, game->heroDeath, 0.15);
+		}
+		else
+		{
+			drawTextGL(_("l o s e r"), game->heroDeath, 0.25);
+		}
 	}
 }
 

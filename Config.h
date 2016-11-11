@@ -47,6 +47,7 @@ public:
 	float	screenBoundY()		{	return m_screenBound[1];}
 	float	zTrans()			{	return m_zTrans;		}
 
+	bool	show_all()			{	return	m_show_all;		}
 	bool	fullScreen()		{	return	m_full_screen;	}
 	bool	blend()				{	return	m_blend_enabled;}
 	bool	texBorder()			{	return	m_tex_border;	}
@@ -61,6 +62,7 @@ public:
 #endif // USE_SDL_CDROM
 	bool	debug()			{	return  m_debug;		}
 	void	setFullScreen(bool s)		{	m_full_screen = s;	}
+	void	setShowAll(bool s)			{	m_show_all = s;		}
 	void	setBlend(bool s)			{	m_blend_enabled = s;}
 	void	setTexBorder(bool s)		{	m_tex_border = s;	}
 	void	setAudio(bool s)			{	m_audio_enabled = s;}
@@ -106,6 +108,8 @@ public:
 	TextType	textType()	{ return m_textType; };
 
 private:
+	bool     m_show_all;
+
 	int 	 m_screenW;
 	int 	 m_screenH;
 	float	 m_screenA;

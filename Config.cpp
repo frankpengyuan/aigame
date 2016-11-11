@@ -91,6 +91,7 @@ Config::Config()
 	m_audioType		= AudioOpenAL;
 	m_textType		= TextGLC;
 
+	m_show_all		= true;
 	readFile();
 }
 

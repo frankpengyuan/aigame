@@ -11,7 +11,7 @@
 #endif
 
 #include "gettext.h"
-
+#include <sys/timeb.h>
 #include "MainSDL.h"
 
 #ifdef USE_SDL
@@ -43,6 +43,19 @@
 #include "Audio.h"
 #include "MainGL.h"
 
+int getMilliCount(){
+	timeb tb;
+	ftime(&tb);
+	int nCount = tb.millitm + (tb.time & 0xfffff) * 1000;
+	return nCount;
+}
+
+int getMilliSpan(int nTimeStart){
+	int nSpan = getMilliCount() - nTimeStart;
+	if(nSpan < 0)
+		nSpan += 0x100000 * 1000;
+	return nSpan;
+}
 
 //====================================================================
 MainSDL::MainSDL(int argc, char **argv)
@@ -166,6 +179,8 @@ bool MainSDL::run()
 	frames = 0;
 	while( !done )
 	{
+		int start = getMilliCount();
+
 		SDL_Event event;
 
 		//-- Draw our scene...
@@ -182,8 +197,10 @@ bool MainSDL::run()
 		#endif// CHECK_ERRORS
 
 		//-- Delay
-		SDL_Delay( 32-(int)(24.0*game->gameSpeed) );
-//		SDL_Delay( 8 );
+		if (config->show_all())
+			SDL_Delay( 32-(int)(24.0*game->gameSpeed) );
+		else		
+			SDL_Delay(	0 );
 //		SDL_Delay( 16 );
 //		SDL_Delay( 32 );
 //		SDL_Delay( 66 );
@@ -204,7 +221,7 @@ bool MainSDL::run()
 //				saveEvent(&event);
 			done = this->process(&event);
 		}
-		this->joystickMove();
+		//this->joystickMove();
 		//this->keyMove();
 		this->aimove();
 		++frames;
@@ -252,12 +269,26 @@ bool MainSDL::run()
 						game->speedAdj = targetAdj;
 				}
 				else
-					game->speedAdj = targetAdj;
-
+				{
+					if (config->show_all())
+						game->speedAdj = targetAdj;
+					else
+						game->speedAdj = 1.0;
+				}
+					
 //				if( !(frames%500) )
 //					if( config->debug() ) fprintf(stdout, _("fps = %g speedAdj = %g\n"), game->fps, game->speedAdj);
 			}
 
+		}
+		int milliSecondsElapsed = getMilliSpan(start);
+		if(game->gameMode == Global::Game)
+		{
+			if (game->total_time == 0)
+			{
+				game->hero->fireGun(true); // start shooting just after enter the game
+			}
+			game->total_time += milliSecondsElapsed;
 		}
 	}
 	fflush(stdout);

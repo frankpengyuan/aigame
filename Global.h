@@ -36,6 +36,7 @@ public:
 
 	~Global();
 
+	static unsigned long total_time;
 	static Global	*init();
 	static Global	*getInstance();
 	static void		destroy();

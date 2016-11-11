@@ -109,6 +109,10 @@ int main(int argc, char **argv)
 		{
 			config->setTexBorder(false);
 		}
+		else if( strcmp(argv[i], "-nv") == 0 || strcmp(argv[i], "--nodisplay") == 0)
+		{
+			config->setShowAll(false);
+		}
 		else if( strcmp(argv[i], "--debug") == 0)
 		{
 			config->setDebug(true);
@@ -125,6 +129,7 @@ int main(int argc, char **argv)
 				"--------------------------------------------------\n"
 				"Chromium B.S.U. options\n"
 				"--------------------------------------------------\n"
+				"   -nv/--nodisplay     : run faster for training\n"
 				"   -f/--fullscreen     : run in fullscreen mode\n"
 				"   -w/--window         : run in windowed mode\n"
 				"   -v/--vidmode <mode> : mode 0 =  512 x  384\n"
