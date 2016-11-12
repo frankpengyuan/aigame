@@ -21,6 +21,7 @@
 #include <cstring>
 #include <cmath>
 #include <climits>
+#include <vector>
 
 #include "Config.h"
 
@@ -30,6 +31,9 @@
 #include "Audio.h"
 #include "Ground.h"
 #include "EnemyAmmo.h"
+#include "EnemyAircraft.h"
+#include "tcp_server.h"
+#include "EnemyFleet.h"
 
 #if SDL_VERSION_ATLEAST(2,0,0)
 		#define SDLK_KP1 SDLK_KP_1
@@ -343,6 +347,7 @@ void MainSDL::keyUp(SDL_Event *event)
 void MainSDL::keyDown(SDL_Event *event)
 {
 	Global	*game = Global::getInstance();
+	Config* config = Config::instance();
 	switch(event->key.keysym.sym)
 	{
 	    case SDL_QUIT:
@@ -534,7 +539,181 @@ void MainSDL::keyMove()
 	}
 }
 //----------------------------------------------------------
-void MainSDL::aimove()
+void MainSDL::aimove() // with tcp
+{	
+	Config	*config = Config::instance();
+	Global	*game = Global::getInstance();
+	static bool send_once = false;
+	if (game->gameMode == Global::HeroDead && config->use_tcp())
+	{
+		if (send_once == false)
+		{
+			send_once = true;
+
+			char msg;
+			config->the_tcp->my_send("o", 1, 1); // game over
+			config->the_tcp->my_send(&(game->hero->score), sizeof(float), 1); // send final score
+		}
+	}
+	else if(game->gameMode == Global::Game && config->use_tcp()){
+		send_once = false;
+		config->the_tcp->listen_and_accept();
+		ActiveAmmo		*thisAmmo;
+		ActiveAmmo		*backAmmo;
+		ActiveAmmo		*nextAmmo;
+		static int flag = 0; // 1 go right, -1 go left
+		static int vflag = 0; // 1 gp up, -1 go down
+		bool start_edge = false;
+
+		std::vector<float> ammo_x_vec;
+		std::vector<float> ammo_y_vec;
+		std::vector<float> ammo_vx_vec;
+		std::vector<float> ammo_vy_vec;
+		std::vector<char> ammo_type_vec;
+		for(int i = 0; i < NUM_ENEMY_AMMO_TYPES; i++)
+		{
+			thisAmmo = game -> enemyAmmo -> ammoRoot[i] -> next;
+			while(thisAmmo)
+			{
+				ammo_x_vec.push_back(thisAmmo->pos[0]);
+				ammo_y_vec.push_back(thisAmmo->pos[1]);
+				ammo_vx_vec.push_back(thisAmmo->vel[0]);
+				ammo_vy_vec.push_back(thisAmmo->vel[1]);
+				ammo_type_vec.push_back((char)i);
+				thisAmmo = thisAmmo->next;
+			}
+		}
+
+		EnemyAircraft	*thisEnemy;
+		EnemyAircraft	*backEnemy;
+		EnemyAircraft	*nextEnemy;
+		thisEnemy = game -> enemyFleet->squadRoot->next;
+
+		std::vector<float> enemy_x_vec;
+		std::vector<float> enemy_y_vec;
+		std::vector<char> enemy_type_vec;
+		while(thisEnemy)
+		{
+			enemy_x_vec.push_back(thisEnemy->pos[0]);
+			enemy_y_vec.push_back(thisEnemy->pos[1]);
+			enemy_type_vec.push_back((char)thisEnemy->type);
+			thisEnemy = thisEnemy->next;
+		}
+
+		hero_info_t the_hero_info = {game->hero->pos[0], game->hero->pos[1], game->hero->damage, game->hero->shields, game->hero->score};
+
+		/************* TCP Section ******************/
+		char cmd[5] = "aehn";
+		char msg;
+		int temp;
+		config->the_tcp->my_send(cmd, 1, 1);
+
+		temp = (int)ammo_x_vec.size();
+		config->the_tcp->my_send(& temp, sizeof(int), 1);
+		
+		if (temp > 0)
+		{
+			ammo_x_vec.front();
+			config->the_tcp->my_send(& ammo_x_vec.front(), sizeof(float), ammo_x_vec.size());
+			config->the_tcp->my_send(& ammo_y_vec.front(), sizeof(float), ammo_y_vec.size());
+			config->the_tcp->my_send(& ammo_vx_vec.front(), sizeof(float), ammo_vx_vec.size());
+			config->the_tcp->my_send(& ammo_vy_vec.front(), sizeof(float), ammo_vy_vec.size());
+			config->the_tcp->my_send(& ammo_type_vec.front(), sizeof(char), ammo_type_vec.size());
+		}
+
+		config->the_tcp->my_send(cmd+1, 1, 1);
+		temp = (int)enemy_x_vec.size();
+		config->the_tcp->my_send(& temp, sizeof(int), 1);
+
+		if (temp > 0)
+		{
+			config->the_tcp->my_send(& enemy_x_vec.front(), sizeof(float), enemy_x_vec.size());
+			config->the_tcp->my_send(& enemy_y_vec.front(), sizeof(float), enemy_y_vec.size());
+			config->the_tcp->my_send(& enemy_type_vec.front(), sizeof(char), enemy_type_vec.size());			
+		}
+
+		config->the_tcp->my_send(cmd+2, 1, 1);
+		config->the_tcp->my_send(& the_hero_info, HERO_INFO_T_SIZE, 1);
+		
+		char action;
+		config->the_tcp->my_send(cmd+3, 1, 1);
+		config->the_tcp->my_receive(& action, 1);
+
+		switch (action)
+		{
+			case 'a':{
+				flag = -1;
+				break;
+			}
+			case 'd':{
+				flag = 1;
+				break;
+			}
+			case 'w':{
+				vflag = 1;
+				break;
+			}
+			case 's':{
+				vflag = -1;
+				break;
+			}
+			default:
+			{
+				flag = 0;
+				vflag = 0;
+			}
+		}
+		 
+		/************* End TCP Section **************/
+
+		start_edge = !((flag < 0 && key_speed_x < 0) ||
+			(flag > 0 && key_speed_x > 0) ||
+			(vflag < 0 && key_speed_y < 0) ||
+			(vflag > 0 && key_speed_y > 0));
+		if (start_edge)
+		{
+			key_speed_x = 0;
+			key_speed_y = 0;
+		}
+		if (flag < 0 && start_edge)
+		{
+			key_speed_x -= 5; flag ++;
+		}
+		else if (flag > 0 && start_edge)
+		{
+			key_speed_x += 5; flag --;
+		}
+		if (vflag < 0 && start_edge)
+		{
+			key_speed_y -= 5; vflag ++;
+		}
+		else if (vflag > 0 && start_edge)
+		{
+			key_speed_y += 5; vflag --;
+		}
+		if(game->gameMode == Global::Game && !start_edge)
+		{
+			if( flag < 0) key_speed_x -= 2.0 + abs(key_speed_x)*0.4;
+			if( flag > 0) key_speed_x += 2.0 + abs(key_speed_x)*0.4;	
+			if( vflag < 0) key_speed_y -= 2.0 + abs(key_speed_y)*0.4;
+			if( vflag > 0) key_speed_y += 2.0 + abs(key_speed_y)*0.4;
+			flag -= flag > 0 ? 1 : (flag < 0 ? -1 : 0);
+			vflag -= vflag > 0 ? 1 : (vflag < 0 ? -1 : 0);
+		}
+		float s = 0.7;
+		key_speed_x *= s;
+		key_speed_y *= s;
+		//printf("key_speed_x: %f, flag: %d\n", key_speed_x, flag);
+		//printf("key_speed_y: %f, vflag: %d\n", key_speed_y, vflag);
+		game->hero->moveEvent(key_speed_x,key_speed_y);
+	}
+	else if (game->gameMode == Global::Game)
+	{
+		baseline_move();
+	}
+}
+
+void MainSDL::baseline_move()
 {	
 	Global	*game = Global::getInstance();
 	ActiveAmmo		*thisAmmo;

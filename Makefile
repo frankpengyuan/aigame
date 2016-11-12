@@ -116,6 +116,7 @@ am_chromium_bsu_OBJECTS = chromium_bsu-Ammo.$(OBJEXT) \
 	chromium_bsu-EnemyAircraft_Straight.$(OBJEXT) \
 	chromium_bsu-EnemyAircraft_Tank.$(OBJEXT) \
 	chromium_bsu-EnemyAmmo.$(OBJEXT) \
+	chromium_bsu-tcp_server.$(OBJEXT) \
 	chromium_bsu-EnemyFleet.$(OBJEXT) \
 	chromium_bsu-Explosions.$(OBJEXT) \
 	chromium_bsu-Global.$(OBJEXT) chromium_bsu-Ground.$(OBJEXT) \
@@ -421,6 +422,8 @@ chromium_bsu_SOURCES = \
 	EnemyAircraft_Tank.h \
 	EnemyAmmo.cpp \
 	EnemyAmmo.h \
+	tcp_server.cpp \
+	tcp_server.h \
 	EnemyFleet.cpp \
 	EnemyFleet.h \
 	Explosions.cpp \
@@ -608,6 +611,7 @@ include ./$(DEPDIR)/chromium_bsu-Text.Po
 include ./$(DEPDIR)/chromium_bsu-TextFTGL.Po
 include ./$(DEPDIR)/chromium_bsu-TextGLC.Po
 include ./$(DEPDIR)/chromium_bsu-main.Po
+include ./$(DEPDIR)/chromium_bsu-tcp_server.Po
 include ./$(DEPDIR)/chromium_bsu-textGeometryBSU.Po
 include ./$(DEPDIR)/chromium_bsu-textGeometryChromium.Po
 
@@ -820,6 +824,20 @@ chromium_bsu-EnemyAmmo.obj: EnemyAmmo.cpp
 #	$(AM_V_CXX)source='EnemyAmmo.cpp' object='chromium_bsu-EnemyAmmo.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(chromium_bsu_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o chromium_bsu-EnemyAmmo.obj `if test -f 'EnemyAmmo.cpp'; then $(CYGPATH_W) 'EnemyAmmo.cpp'; else $(CYGPATH_W) '$(srcdir)/EnemyAmmo.cpp'; fi`
+
+chromium_bsu-tcp_server.o: tcp_server.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(chromium_bsu_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT chromium_bsu-tcp_server.o -MD -MP -MF $(DEPDIR)/chromium_bsu-tcp_server.Tpo -c -o chromium_bsu-tcp_server.o `test -f 'tcp_server.cpp' || echo '$(srcdir)/'`tcp_server.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/chromium_bsu-tcp_server.Tpo $(DEPDIR)/chromium_bsu-tcp_server.Po
+#	$(AM_V_CXX)source='tcp_server.cpp' object='chromium_bsu-tcp_server.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(chromium_bsu_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o chromium_bsu-tcp_server.o `test -f 'tcp_server.cpp' || echo '$(srcdir)/'`tcp_server.cpp
+
+chromium_bsu-tcp_server.obj: tcp_server.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(chromium_bsu_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT chromium_bsu-tcp_server.obj -MD -MP -MF $(DEPDIR)/chromium_bsu-tcp_server.Tpo -c -o chromium_bsu-tcp_server.obj `if test -f 'tcp_server.cpp'; then $(CYGPATH_W) 'tcp_server.cpp'; else $(CYGPATH_W) '$(srcdir)/tcp_server.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/chromium_bsu-tcp_server.Tpo $(DEPDIR)/chromium_bsu-tcp_server.Po
+#	$(AM_V_CXX)source='tcp_server.cpp' object='chromium_bsu-tcp_server.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(chromium_bsu_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o chromium_bsu-tcp_server.obj `if test -f 'tcp_server.cpp'; then $(CYGPATH_W) 'tcp_server.cpp'; else $(CYGPATH_W) '$(srcdir)/tcp_server.cpp'; fi`
 
 chromium_bsu-EnemyFleet.o: EnemyFleet.cpp
 	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(chromium_bsu_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT chromium_bsu-EnemyFleet.o -MD -MP -MF $(DEPDIR)/chromium_bsu-EnemyFleet.Tpo -c -o chromium_bsu-EnemyFleet.o `test -f 'EnemyFleet.cpp' || echo '$(srcdir)/'`EnemyFleet.cpp

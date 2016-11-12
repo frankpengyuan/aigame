@@ -53,6 +53,8 @@ chromium_bsu_SOURCES = \
 	EnemyAircraft_Tank.h \
 	EnemyAmmo.cpp \
 	EnemyAmmo.h \
+	tcp_server.cpp \
+	tcp_server.h \
 	EnemyFleet.cpp \
 	EnemyFleet.h \
 	Explosions.cpp \

@@ -9,6 +9,7 @@
 #define Config_h
 
 #include "compatibility.h"
+#include "tcp_server.h"
 
 #include <cstdio>
 
@@ -24,7 +25,7 @@ public:
 	static Config	*init();
 	static Config	*instance();
 	static void		destroy();
-
+	tcp_server * the_tcp;
 
 	const char	*getFileName();
 	const char	*getOldFileName();
@@ -47,6 +48,7 @@ public:
 	float	screenBoundY()		{	return m_screenBound[1];}
 	float	zTrans()			{	return m_zTrans;		}
 
+	bool	use_tcp()			{	return	m_use_tcp;		}
 	bool	show_all()			{	return	m_show_all;		}
 	bool	fullScreen()		{	return	m_full_screen;	}
 	bool	blend()				{	return	m_blend_enabled;}
@@ -62,6 +64,7 @@ public:
 #endif // USE_SDL_CDROM
 	bool	debug()			{	return  m_debug;		}
 	void	setFullScreen(bool s)		{	m_full_screen = s;	}
+	void	setTCP(bool s)				{	m_use_tcp = s;		}
 	void	setShowAll(bool s)			{	m_show_all = s;		}
 	void	setBlend(bool s)			{	m_blend_enabled = s;}
 	void	setTexBorder(bool s)		{	m_tex_border = s;	}
@@ -120,6 +123,7 @@ private:
 	float	 m_screenBound[2];
 	float	 m_zTrans;
 
+	bool	 m_use_tcp;
 	bool	 m_blend_enabled;
 	bool	 m_tex_border;
 	bool	 m_audio_enabled;

@@ -92,7 +92,7 @@ protected:
 	float	gunFlash1[NUM_HERO_AMMO_TYPES];
 	bool	gunActive[NUM_HERO_AMMO_TYPES];
 
-private:
+public:
 	float	epos[3];
 	float	size[2];
 	float	bound[2][2];

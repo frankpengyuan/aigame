@@ -68,7 +68,7 @@ protected:
 	virtual void	calcShootInterval();
 	virtual void	move() = 0;
 
-protected:
+public:
 	EnemyAircraft	*next;
 	EnemyAircraft	*back;
 	EnemyAircraft	*over;

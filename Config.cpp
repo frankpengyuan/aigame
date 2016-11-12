@@ -39,6 +39,7 @@
 #include "StatusDisplay.h"
 
 #include "GroundMetal.h"
+#include "tcp_server.h"
 
 Config	*Config::m_instance = 0;
 
@@ -51,7 +52,7 @@ Config::Config()
 	//-- setup defaults
 	m_screenW		= 800;
 	m_screenH		= 600;
-	m_screenA		=   1.3333333f;
+	m_screenA		=  1.3333333f;
 	m_screenFOV		=  30.0f;
 	m_screenNear	=  10.0;
 	m_screenFar		=  70.0;
@@ -92,6 +93,7 @@ Config::Config()
 	m_textType		= TextGLC;
 
 	m_show_all		= true;
+	m_use_tcp		= false;
 	readFile();
 }
 

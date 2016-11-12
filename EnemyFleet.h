@@ -61,7 +61,7 @@ private:
 
 	void	bossExplosion(EnemyAircraft *);
 
-private:
+public:
 	GLuint			shipTex[NumEnemyTypes];
 	GLuint			extraTex[NumEnemyTypes];
 

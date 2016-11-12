@@ -39,6 +39,7 @@ private:
 	void keyDownGame(SDL_Event *event);
 	void keyUp(SDL_Event *event);
 	void aimove(void);
+	void baseline_move(void);
 	void mouseMotion(SDL_Event *event);
 	void mouseButtonDown(SDL_Event *event);
 	void mouseButtonUp(SDL_Event *event);
@@ -66,6 +67,9 @@ private:
 	float	key_speed_x, key_speed_y;
 	int mem;
 };
+
+int getMilliCount();
+int getMilliSpan(int nTimeStart);
 
 #endif // USE_SDL
 

@@ -113,6 +113,11 @@ int main(int argc, char **argv)
 		{
 			config->setShowAll(false);
 		}
+		else if( strcmp(argv[i], "-tcp") == 0 || strcmp(argv[i], "--tcp") == 0)
+		{
+			config->setTCP(true);
+			config->the_tcp = new tcp_server(atoi(argv[i+1]));
+		}
 		else if( strcmp(argv[i], "--debug") == 0)
 		{
 			config->setDebug(true);
@@ -122,6 +127,8 @@ int main(int argc, char **argv)
 			printf("%s\n", PACKAGE_STRING);
 			exit(0);
 		}
+		else if(atoi(argv[i]) > 0)
+		{}
 		else
 		{
 			fprintf(stderr, _(
@@ -129,6 +136,7 @@ int main(int argc, char **argv)
 				"--------------------------------------------------\n"
 				"Chromium B.S.U. options\n"
 				"--------------------------------------------------\n"
+				"   -tcp/--tcp [port]   : run as tcp server\n"
 				"   -nv/--nodisplay     : run faster for training\n"
 				"   -f/--fullscreen     : run in fullscreen mode\n"
 				"   -w/--window         : run in windowed mode\n"

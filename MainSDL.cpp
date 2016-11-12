@@ -36,7 +36,7 @@
 
 #include "Config.h"
 #include "Global.h"
-
+#include "tcp_server.h"
 #include "extern.h"
 #include "Global.h"
 #include "HeroAircraft.h"
@@ -223,6 +223,7 @@ bool MainSDL::run()
 		}
 		//this->joystickMove();
 		//this->keyMove();
+		//printf("one aimove\n");
 		this->aimove();
 		++frames;
 
