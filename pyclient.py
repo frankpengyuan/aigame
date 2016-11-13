@@ -4,9 +4,10 @@ from array import array
 import struct
 import random
 
-address = ('127.0.0.1', 8222)  
+address = ('127.0.0.1', 8223)
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  
 s.connect(address)  
+s.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
   
 s.send('') 
 
@@ -21,6 +22,16 @@ enemy_type_array = array('c')
 
 while 1: 
 	# start gaming!
+	del ammo_x_array[:]
+	del ammo_y_array[:]
+	del ammo_vx_array[:]
+	del ammo_vy_array[:]
+	del ammo_type_array[:]
+	del enemy_x_array[:]
+	del enemy_y_array[:]
+	del enemy_type_array[:]
+
+
 	action_space = ['w', 'a', 's', 'd', '0']
 	info_cat = struct.unpack("<c", s.recv(1))
 	if info_cat[0] is 'a':

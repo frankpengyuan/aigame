@@ -1,0 +1,6 @@
+chromium_bsu-newclass.o: newclass.cpp /usr/include/stdc-predef.h \
+ newclass.h
+
+/usr/include/stdc-predef.h:
+
+newclass.h:

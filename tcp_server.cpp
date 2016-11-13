@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <netinet/tcp.h>
 #include <netinet/in.h>
 #include <errno.h>
 #include <string.h>
@@ -16,6 +17,8 @@ tcp_server::tcp_server(int port_num)
     this -> port = port_num;
     this -> socket_desc = socket(AF_INET, SOCK_STREAM, 0);
     this -> is_connected = false;
+    int flag = 1;
+    setsockopt(this -> socket_desc,IPPROTO_TCP,TCP_NODELAY,(char *)&flag,sizeof(flag));
 }
 
 tcp_server::~tcp_server()
@@ -66,13 +69,14 @@ bool tcp_server::listen_and_accept()
         return false;
     }
     printf("[TCP] [Listen] Connection accepted\n");
-
+    int flag = 1;
+    setsockopt(this -> client_sock,IPPROTO_TCP,TCP_NODELAY,(char *)&flag,sizeof(flag));
     return true;
 }
 
 bool tcp_server::my_send(const void * start, size_t length, unsigned long count)
 {
-    if( send(this -> client_sock , start , length * count, 0) < 0) // TODO: falg:MSG_WAITALL? not sure for sending
+    if( send(this -> client_sock , start , length * count, 0 ) < 0) // TODO: falg:MSG_WAITALL? not sure for sending
     {
         printf("[TCP] Send failed\n");
         return false;

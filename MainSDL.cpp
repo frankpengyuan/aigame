@@ -179,6 +179,7 @@ bool MainSDL::run()
 	frames = 0;
 	while( !done )
 	{
+		static int new_flag = 0;
 		int start = getMilliCount();
 
 		SDL_Event event;
@@ -282,14 +283,15 @@ bool MainSDL::run()
 			}
 
 		}
-		int milliSecondsElapsed = getMilliSpan(start);
+		int	milliSecondsElapsed = getMilliSpan(start);
 		if(game->gameMode == Global::Game)
 		{
 			if (game->total_time == 0)
-			{
 				game->hero->fireGun(true); // start shooting just after enter the game
-			}
-			game->total_time += milliSecondsElapsed;
+			if (new_flag == 1)
+				game->total_time += milliSecondsElapsed;
+			if (new_flag == 0)
+				new_flag = 1;
 		}
 	}
 	fflush(stdout);

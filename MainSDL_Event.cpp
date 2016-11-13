@@ -565,11 +565,21 @@ void MainSDL::aimove() // with tcp
 		static int vflag = 0; // 1 gp up, -1 go down
 		bool start_edge = false;
 
-		std::vector<float> ammo_x_vec;
-		std::vector<float> ammo_y_vec;
-		std::vector<float> ammo_vx_vec;
-		std::vector<float> ammo_vy_vec;
-		std::vector<char> ammo_type_vec;
+		static std::vector<float> ammo_x_vec;
+		static std::vector<float> ammo_y_vec;
+		static std::vector<float> ammo_vx_vec;
+		static std::vector<float> ammo_vy_vec;
+		static std::vector<char> ammo_type_vec;
+		ammo_x_vec.clear();
+		ammo_y_vec.clear();
+		ammo_vx_vec.clear();
+		ammo_vy_vec.clear();
+		ammo_type_vec.clear();
+		ammo_x_vec.reserve(50);
+		ammo_y_vec.reserve(50);
+		ammo_vx_vec.reserve(50);
+		ammo_vy_vec.reserve(50);
+		ammo_type_vec.reserve(50);
 		for(int i = 0; i < NUM_ENEMY_AMMO_TYPES; i++)
 		{
 			thisAmmo = game -> enemyAmmo -> ammoRoot[i] -> next;
@@ -589,9 +599,15 @@ void MainSDL::aimove() // with tcp
 		EnemyAircraft	*nextEnemy;
 		thisEnemy = game -> enemyFleet->squadRoot->next;
 
-		std::vector<float> enemy_x_vec;
-		std::vector<float> enemy_y_vec;
-		std::vector<char> enemy_type_vec;
+		static std::vector<float> enemy_x_vec;
+		static std::vector<float> enemy_y_vec;
+		static std::vector<char> enemy_type_vec;
+		enemy_x_vec.clear();
+		enemy_y_vec.clear();
+		enemy_type_vec.clear();
+		enemy_x_vec.reserve(50);
+		enemy_y_vec.reserve(50);
+		enemy_type_vec.reserve(50);
 		while(thisEnemy)
 		{
 			enemy_x_vec.push_back(thisEnemy->pos[0]);
@@ -613,7 +629,6 @@ void MainSDL::aimove() // with tcp
 		
 		if (temp > 0)
 		{
-			ammo_x_vec.front();
 			config->the_tcp->my_send(& ammo_x_vec.front(), sizeof(float), ammo_x_vec.size());
 			config->the_tcp->my_send(& ammo_y_vec.front(), sizeof(float), ammo_y_vec.size());
 			config->the_tcp->my_send(& ammo_vx_vec.front(), sizeof(float), ammo_vx_vec.size());
