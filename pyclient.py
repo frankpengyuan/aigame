@@ -19,6 +19,14 @@ ammo_type_array = array('c')
 enemy_x_array = array('f')
 enemy_y_array = array('f')
 enemy_type_array = array('c')
+powerUp_x_array = array('f')
+powerUp_y_array = array('f')
+powerUp_type_array = array('c')
+
+x_min = float('inf')
+y_min = float('inf')
+x_max = float('-inf')
+y_max = float('-inf')
 
 while 1: 
 	# start gaming!
@@ -30,6 +38,9 @@ while 1:
 	del enemy_x_array[:]
 	del enemy_y_array[:]
 	del enemy_type_array[:]
+	del powerUp_x_array[:]
+	del powerUp_y_array[:]
+	del powerUp_type_array[:]
 
 
 	action_space = ['w', 'a', 's', 'd', '0']
@@ -51,13 +62,20 @@ while 1:
 			enemy_y_array.fromstring(s.recv(length * 4))
 			enemy_type_array.fromstring(s.recv(length))
 			enemy_info = zip(enemy_x_array, enemy_y_array, enemy_type_array)
+	elif info_cat[0] is 'p':
+		length = struct.unpack("<i", s.recv(4))[0]
+		if length > 0:
+			powerUp_x_array.fromstring(s.recv(length * 4))
+			powerUp_y_array.fromstring(s.recv(length * 4))
+			powerUp_type_array.fromstring(s.recv(length))
+			powerUp_info = zip(powerUp_x_array, powerUp_y_array, powerUp_type_array)
+			print powerUp_info
 	elif info_cat[0] is 'h':
-		hero_x, hero_y, hero_taken_dmg, hero_shield, hero_score = struct.unpack("<5f", s.recv(20))
-		hero_info = [hero_x, hero_y, hero_taken_dmg, hero_shield, hero_score]
+		hero_x, hero_y, hero_taken_dmg, hero_lives, hero_gun1, hero_gun2, hero_gun3, hero_shield, hero_score = struct.unpack("<9f", s.recv(36))
+		hero_info = [hero_x, hero_y, hero_taken_dmg, hero_lives, hero_gun1, hero_gun2, hero_gun3, hero_shield, hero_score]
 	elif info_cat[0] is 'o':
 		score = struct.unpack("<f", s.recv(4))[0]
 		print "game over with score: " + str(score)
-		break
 	elif info_cat[0] is 'n':
 		s.send(random.choice(action_space))
 

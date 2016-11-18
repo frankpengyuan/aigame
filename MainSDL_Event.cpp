@@ -34,6 +34,7 @@
 #include "EnemyAircraft.h"
 #include "tcp_server.h"
 #include "EnemyFleet.h"
+#include "PowerUps.h"
 
 #if SDL_VERSION_ATLEAST(2,0,0)
 		#define SDLK_KP1 SDLK_KP_1
@@ -554,6 +555,9 @@ void MainSDL::aimove() // with tcp
 			config->the_tcp->my_send("o", 1, 1); // game over
 			config->the_tcp->my_send(&(game->hero->score), sizeof(float), 1); // send final score
 		}
+		send_once = false;
+		game->newGame();
+		game->gameMode = Global::Game;
 	}
 	else if(game->gameMode == Global::Game && config->use_tcp()){
 		send_once = false;
@@ -616,10 +620,32 @@ void MainSDL::aimove() // with tcp
 			thisEnemy = thisEnemy->next;
 		}
 
-		hero_info_t the_hero_info = {game->hero->pos[0], game->hero->pos[1], game->hero->damage, game->hero->shields, game->hero->score};
+		PowerUp	*thisPowerUp;
+		PowerUp	*backPowerUp;
+		PowerUp	*nextPowerUp;
+		thisPowerUp = game -> powerUps -> pwrUpRoot -> next;
+
+		static std::vector<float> powerUp_x_vec;
+		static std::vector<float> powerUp_y_vec;
+		static std::vector<char> powerUp_type_vec;
+		powerUp_x_vec.clear();
+		powerUp_y_vec.clear();
+		powerUp_type_vec.clear();
+		powerUp_x_vec.reserve(50);
+		powerUp_y_vec.reserve(50);
+		powerUp_type_vec.reserve(50);
+		while(thisPowerUp)
+		{
+			powerUp_x_vec.push_back(thisPowerUp->pos[0]);
+			powerUp_y_vec.push_back(thisPowerUp->pos[1]);
+			powerUp_type_vec.push_back((char)thisPowerUp->type);
+			thisPowerUp = thisPowerUp->next;
+		}
+
+		hero_info_t the_hero_info = {game->hero->pos[0], game->hero->pos[1], game->hero->damage, (float)game->hero->lives, (float)(game->hero->gunActive[0]), (float)(game->hero->gunActive[1]), (float)(game->hero->gunActive[2]), game->hero->shields, game->hero->score};
 
 		/************* TCP Section ******************/
-		char cmd[5] = "aehn";
+		char cmd[6] = "aephn";
 		char msg;
 		int temp;
 		config->the_tcp->my_send(cmd, 1, 1);
@@ -648,10 +674,21 @@ void MainSDL::aimove() // with tcp
 		}
 
 		config->the_tcp->my_send(cmd+2, 1, 1);
+		temp = (int)powerUp_x_vec.size();
+		config->the_tcp->my_send(& temp, sizeof(int), 1);
+
+		if (temp > 0)
+		{
+			config->the_tcp->my_send(& powerUp_x_vec.front(), sizeof(float), powerUp_x_vec.size());
+			config->the_tcp->my_send(& powerUp_y_vec.front(), sizeof(float), powerUp_y_vec.size());
+			config->the_tcp->my_send(& powerUp_type_vec.front(), sizeof(char), powerUp_type_vec.size());			
+		}
+
+		config->the_tcp->my_send(cmd+3, 1, 1);
 		config->the_tcp->my_send(& the_hero_info, HERO_INFO_T_SIZE, 1);
 		
 		char action;
-		config->the_tcp->my_send(cmd+3, 1, 1);
+		config->the_tcp->my_send(cmd+4, 1, 1);
 		config->the_tcp->my_receive(& action, 1);
 
 		switch (action)
@@ -664,11 +701,11 @@ void MainSDL::aimove() // with tcp
 				flag = 1;
 				break;
 			}
-			case 'w':{
+			case 's':{
 				vflag = 1;
 				break;
 			}
-			case 's':{
+			case 'w':{
 				vflag = -1;
 				break;
 			}

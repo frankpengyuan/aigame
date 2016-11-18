@@ -52,7 +52,7 @@ public:
 	void	loadTextures();
 	void	deleteTextures();
 
-private:
+public:
 	PowerUp	*pwrUpRoot;
 	PowerUp	*currentPwrUp;
 	float	pwrUpSize[NumPowerUps][2];

@@ -90,6 +90,7 @@ protected:
 
 	float	gunFlash0[NUM_HERO_AMMO_TYPES];
 	float	gunFlash1[NUM_HERO_AMMO_TYPES];
+public:
 	bool	gunActive[NUM_HERO_AMMO_TYPES];
 
 public:

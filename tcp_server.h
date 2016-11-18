@@ -18,7 +18,7 @@
 
 #define AMMO_T_SIZE 17
 #define ENEMY_SHIP_T_SIZE 17
-#define HERO_INFO_T_SIZE 20
+#define HERO_INFO_T_SIZE 36
 
 struct ammo_t
 {
@@ -37,6 +37,10 @@ struct hero_info_t
 {
     float pos[2];
     float taken_dmg;
+    float lives;
+    float gun1;
+    float gun2;
+    float gun3;
     float shield;
     float score;
 };
