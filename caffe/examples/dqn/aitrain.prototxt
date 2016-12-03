@@ -1,0 +1,138 @@
+layer {
+  name: "features"
+  type: "Input"
+  top: "features"
+  input_param {
+    shape {
+      dim: 64
+      dim: 20
+      dim: 60
+      dim: 45
+    }
+  }
+}
+
+layer {
+  name: "label"
+  type: "Input"
+  top: "label"
+  input_param {
+    shape {
+      dim: 64
+      dim: 5
+    }
+  }
+}
+
+layer {
+  name: "filter"
+  type: "Input"
+  top: "filter"
+  input_param {
+    shape {
+      dim: 64
+      dim: 5
+    }
+  }
+}
+
+layer {
+  name: "conv1_layer"
+  type: "Convolution"
+  bottom: "features"
+  top: "conv1"
+  convolution_param {
+    num_output: 8
+    kernel_size: 6
+    stride: 3
+    weight_filler {
+      type: "gaussian"
+      std: 0.1
+    }
+  }
+}
+layer {
+  name: "conv1_relu_layer"
+  type: "ReLU"
+  bottom: "conv1"
+  top: "conv1"
+  #relu_param {
+  #  negative_slope: 0.1
+  #}
+}
+layer {
+  name: "conv2_layer"
+  type: "Convolution"
+  bottom: "conv1"
+  top: "conv2"
+  convolution_param {
+    num_output: 16
+    kernel_size: 4
+    stride: 2
+    weight_filler {
+      type: "gaussian"
+      std: 0.1
+    }
+  }
+}
+layer {
+  name: "conv2_relu_layer"
+  type: "ReLU"
+  bottom: "conv2"
+  top: "conv2"
+  #relu_param {
+  #  negative_slope: 0.01
+  #}
+}
+layer {
+  name: "ip1_layer"
+  type: "InnerProduct"
+  bottom: "conv2"
+  top: "ip1"
+  inner_product_param {
+    num_output: 128
+    weight_filler {
+      type: "gaussian"
+      std: 0.1
+    }
+  }
+}
+layer {
+  name: "ip1_relu_layer"
+  type: "ReLU"
+  bottom: "ip1"
+  top: "ip1"
+  #relu_param {
+  #  negative_slope: 0.01
+  #}
+}
+layer {
+  name: "ip2_layer"
+  type: "InnerProduct"
+  bottom: "ip1"
+  top: "q_values"
+  inner_product_param {
+    num_output: 5
+    weight_filler {
+      type: "gaussian"
+      std: 0.1
+    }
+  }
+}
+layer {
+  name: "eltwise_layer"
+  type: "Eltwise"
+  bottom: "q_values"
+  bottom: "filter"
+  top: "filtered_q_values"
+  eltwise_param {
+    operation: PROD
+  }
+}
+layer {
+  name: "loss"
+  type: "EuclideanLoss"
+  bottom: "filtered_q_values"
+  bottom: "label"
+  top: "loss"
+}

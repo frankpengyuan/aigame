@@ -1,0 +1,10 @@
+net: "aitrain.prototxt"
+#momentum: 0.9
+base_lr: 0.01
+lr_policy: "step"
+gamma: 0.01
+stepsize: 2000000
+max_iter: 4000000
+display: 10
+snapshot: 10000
+snapshot_prefix: "new"
